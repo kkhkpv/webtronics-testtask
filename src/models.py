@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, orm, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, orm, DateTime, Boolean, func
 from database import Base
 import passlib.hash as hash
 
@@ -19,6 +19,7 @@ class Post(Base):
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+    published = Column(Boolean, server_default="TRUE", nullable=False)
 
     owner_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)

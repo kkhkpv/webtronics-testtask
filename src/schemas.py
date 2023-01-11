@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field, validator
 import orjson
 import re
+from datetime import datetime
 
 
 PASSWORD_PATTERN = re.compile(
@@ -38,3 +39,38 @@ class UserAuth(UserBase):
 
 class UserResponse(UserBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class TokenResponse(ORJSONModel):
+    token: str
+    token_type: str
+
+
+class PostBase(ORJSONModel):
+    title: str
+    content: str
+    published: bool = True
+
+
+class PostCreate(PostBase):
+    pass
+
+
+class Post(PostBase):
+    id: int
+    created_at: datetime
+    owner: UserResponse
+
+    class Config:
+        orm_mode = True
+
+
+class PostResponse(ORJSONModel):
+    Post: Post
+    likes: int
+
+    class Config:
+        orm_mode = True
