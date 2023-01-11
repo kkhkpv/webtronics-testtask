@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  postgres15:
+    container_name: postgres15
+    hostname: localhost
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=webtronics_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pg_data:
+    driver: "local"
