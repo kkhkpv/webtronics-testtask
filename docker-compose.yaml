@@ -1,6 +1,17 @@
 version: '3.7'
 
 services:
+
+  api:
+    build: .
+    depends_on:
+      - postgres15
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
   postgres15:
     container_name: postgres15
     hostname: localhost
