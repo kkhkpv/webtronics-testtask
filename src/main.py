@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from models import *
+from models import User, Likes, Post
 from database import init_models
 from routers.users import router as user_router
 from routers.auth import router as auth_router
