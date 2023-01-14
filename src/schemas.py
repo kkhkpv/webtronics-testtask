@@ -52,6 +52,10 @@ class TokenResponse(ORJSONModel):
     token_type: str
 
 
+class TokenData(ORJSONModel):
+    user_id: int | None
+
+
 class PostBase(ORJSONModel):
     title: str
     content: str
