@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-import models
-import schemas
-import dependencies
-from database import AsyncSession
+import src.models as models
+import src.schemas as schemas
+import src.dependencies as dependencies
+from src.database import AsyncSession
 from sqlalchemy import select
 import passlib.hash as hash
 

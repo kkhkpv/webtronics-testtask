@@ -1,6 +1,21 @@
-class Config:
-    TOKEN_EXP = 50
-    TOKEN_SECRET = "SECRET"
+from pydantic import BaseSettings
+
+
+class Config(BaseSettings):
+
+    # db_host: str
+    # db_port: str
+    db_name: str
+    db_user: str
+    db_password: str
+
+    jwt_key: str
+    jwt_algo: str
+    jwt_exp: int
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 
 settings = Config()

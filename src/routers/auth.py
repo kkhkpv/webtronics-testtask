@@ -1,10 +1,10 @@
 from fastapi import APIRouter, security, Depends, HTTPException, status
-from dependencies import get_session
-import schemas as schemas
-import models as models
-from database import AsyncSession
+from src.dependencies import get_session
+import src.schemas as schemas
+import src.models as models
+from src.database import AsyncSession
 from sqlalchemy import select
-import jwt as jwt
+import src.jwt as jwt
 
 
 router = APIRouter()

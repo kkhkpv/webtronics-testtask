@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, orm, DateTime, Boolean, func
-from database import Base
+from src.database import Base
 import passlib.hash as hash
 
 

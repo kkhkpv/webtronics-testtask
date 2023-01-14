@@ -21,6 +21,9 @@ class ORJSONModel(BaseModel):
 class UserBase(ORJSONModel):
     email: EmailStr
 
+    class Config:
+        orm_mode = True
+
 
 class UserCreate(UserBase):
     password: str = Field(min_length=6)
@@ -53,6 +56,9 @@ class PostBase(ORJSONModel):
     title: str
     content: str
     published: bool = True
+
+    class Config:
+        orm_mode = True
 
 
 class PostCreate(PostBase):
