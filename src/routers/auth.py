@@ -28,8 +28,8 @@ async def user_login(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid credentials")
 
-    access_token: str = jwt.create_access_token(user.id)
+    access_token: str = jwt.create_access_token({"id": user.id})
     return {
-        "token": access_token,
+        "access_token": access_token,
         "token_type": "bearer"
     }

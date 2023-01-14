@@ -48,12 +48,12 @@ class UserResponse(UserBase):
 
 
 class TokenResponse(ORJSONModel):
-    token: str
+    access_token: str
     token_type: str
 
 
 class TokenData(ORJSONModel):
-    user_id: int | None
+    user_id: int
 
 
 class PostBase(ORJSONModel):

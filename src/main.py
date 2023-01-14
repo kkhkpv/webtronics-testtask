@@ -34,4 +34,4 @@ async def test() -> dict[str, str]:
 
 app.include_router(user_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
-app.include_router(posts_router, prefix="/posts")
+app.include_router(posts_router, prefix="/api/posts")

@@ -6,7 +6,7 @@ from src.jwt import verify_token
 from sqlalchemy import select
 
 
-oauth_schema = security.OAuth2PasswordBearer(tokenUrl="/api/login")
+oauth_scheme = security.OAuth2PasswordBearer(tokenUrl="api/login")
 
 
 async def get_session() -> AsyncSession:
@@ -15,7 +15,7 @@ async def get_session() -> AsyncSession:
 
 
 async def verify_current_user(
-    token: str = Depends(oauth_schema),
+    token: str = Depends(oauth_scheme),
     session: AsyncSession = Depends(get_session)
 ) -> User:
     credential_exception = HTTPException(
@@ -24,7 +24,7 @@ async def verify_current_user(
         headers={"WWW-Authenticate": "Bearer"}
     )
     token_data = verify_token(token, credential_exception)
-    select_query = select(User).filter(User.id == token_data.user_id)
+    select_query = select(User).filter(User.id == token_data["user_id"])
     user = await session.execute(select_query)
-    user = session.scalar()
+    user = user.scalar()
     return user
