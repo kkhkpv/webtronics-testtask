@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field, validator
 import orjson
 import re
 from datetime import datetime
+from typing import Literal
 
 
 PASSWORD_PATTERN = re.compile(
@@ -84,3 +85,8 @@ class PostResponse(ORJSONModel):
 
     class Config:
         orm_mode = True
+
+
+class Rate(ORJSONModel):
+    post_id: int
+    dir: Literal[0, 1]

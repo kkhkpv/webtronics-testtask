@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Response
 import src.schemas as schemas
 from src.database import AsyncSession
 from src.dependencies import get_session, verify_current_user
-from sqlalchemy import select, func, desc, update
+from sqlalchemy import select, func, desc, update, delete
 from sqlalchemy.orm import selectinload
 import src.models as models
 from src.jwt import verify_token
@@ -127,3 +127,55 @@ async def change_visibility(
     await session.execute(query)
     await session.commit()
     return f"Visibility of post {id_} has been changed"
+
+
+@router.delete("/{id_}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(
+    id_: int, session: AsyncSession = Depends(get_session),
+    owner: models.User = Depends(verify_current_user)
+):
+    select_query = select(models.Post).where(models.Post.id == id_)
+    candidate = await session.execute(select_query)
+    candidate = candidate.scalar()
+
+    if candidate is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Post with id {id_} wasn't found"
+        )
+    if candidate.owner_id != owner.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="unauthorized action"
+        )
+    delete_query = delete(models.Post).where(models.Post.id == id_)
+    await session.execute(delete_query)
+    await session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.put("/{id_}", status_code=status.HTTP_200_OK)
+async def update_post(
+    id_: int, post: schemas.PostCreate,
+    session: AsyncSession = Depends(get_session),
+    owner: models.User = Depends(verify_current_user)
+):
+    select_query = select(models.Post).where(models.Post.id == id_)
+    candidate = await session.execute(select_query)
+    candidate = candidate.scalar()
+
+    if candidate is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Post with id {id_} wasn't found"
+        )
+    if candidate.owner_id != owner.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="unauthorized action"
+        )
+    query = update(models.Post).where(models.Post.id == id_)\
+        .values(**dict(post)).execution_options(synchronize_session="fetch")
+    await session.execute(query)
+    await session.commit()
+    return Response(status_code=status.HTTP_200_OK)

@@ -4,6 +4,7 @@ from src.database import init_models
 from src.routers.users import router as user_router
 from src.routers.auth import router as auth_router
 from src.routers.posts import router as posts_router
+from src.routers.rating import router as rating_router
 from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
 
@@ -35,3 +36,4 @@ async def test() -> dict[str, str]:
 app.include_router(user_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 app.include_router(posts_router, prefix="/api/posts")
+app.include_router(rating_router, prefix="/api/rating")
