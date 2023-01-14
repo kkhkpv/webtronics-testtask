@@ -13,11 +13,10 @@ async def rate_post(
     session: AsyncSession = Depends(get_session),
     user: models.User = Depends(verify_current_user)
 ) -> dict:
-    select_query = select(models.Post).where(
+    post_select_query = select(models.Post).where(
         models.Post.id == rate.post_id, models.Post.published == True)
-    post = await session.execute(select_query)
-    post.scalar()
-
+    post = await session.execute(post_select_query)
+    post = post.scalar()
     if post is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -26,28 +25,25 @@ async def rate_post(
     if post.owner_id == user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="cant'rate your own post"
+            detail="user tried to rate his own post"
         )
-    select_query = select(models.Likes)\
+    likes_select_query = select(models.Likes)\
         .where(models.Likes.post_id == rate.post_id, models.Likes.user_id == user.id)
-    ratings = session.execute(select_query)
-    vote = ratings.scalar()
+    rating = await session.execute(likes_select_query)
+    rating = rating.scalars()
+
     if rate.dir == 1:
-        if vote is not None:
+        if rating is not None:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="rating already exist"
-            )
+                status_code=status.HTTP_409_CONFLICT, detail="rating already exist")
         rating_to_add = models.Likes(user_id=user.id, post_id=rate.post_id)
         session.add(rating_to_add)
     elif rate.dir == 0:
-        if vote is None:
+        if rating is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="rating doesn exist"
-            )
+                status_code=status.HTTP_404_NOT_FOUND, detail="rating doesnt exist")
         delete_query = delete(models.Likes).where(
             models.Likes.post_id == rate.post_id, models.Likes.user_id == user.id)
         await session.execute(delete_query)
     await session.commit()
-    return {"detail": "rating was saved"}
+    return dict()
